@@ -1,0 +1,146 @@
+
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sales - Sales Recording System</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+```
+
+</head>
+
+<body>
+
+```
+<!-- Sidebar -->
+<aside class="sidebar">
+
+    <h2>Sales System</h2>
+
+    <nav>
+
+        <a href="/">Dashboard</a>
+
+        <a href="/products">Products</a>
+
+        <a href="/sales">Sales</a>
+
+        <a href="/reports">Reports</a>
+
+    </nav>
+
+</aside>
+
+
+<!-- Main Content -->
+<main class="main-content">
+
+    <!-- Header -->
+    <header class="top-header">
+
+        <div>
+
+            <h1>Sales Recording System</h1>
+
+            <p>Record and manage sales</p>
+
+        </div>
+
+        <div class="profile">
+            Admin
+        </div>
+
+    </header>
+
+
+    <!-- Sales Section -->
+    <section class="sales-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>Sales</h2>
+
+                <p>Record your product sales.</p>
+
+            </div>
+
+            <a href="/record_sale" class="add-product-btn">
+                + Record Sale
+            </a>
+
+        </div>
+
+
+        <!-- Sales Table -->
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Product</th>
+
+                        <th>Quantity</th>
+
+                        <th>Total</th>
+
+                        <th>Date</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for sale in sales %}
+
+                    <tr>
+
+                        <td>
+                            {{ sale["product_name"] }}
+                        </td>
+
+                        <td>
+                            {{ sale["quantity"] }}
+                        </td>
+
+                        <td>
+                            GH₵ {{ "{:,.2f}".format(sale["total"]|float) }}
+                        </td>
+
+                        <td>
+                            {{ sale["date"] }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+```
+
+</body>
+
+</html>

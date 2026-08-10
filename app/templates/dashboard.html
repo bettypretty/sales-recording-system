@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard - Sales Recording System</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+```
+
+</head>
+
+<body>
+
+```
+<!-- Header -->
+<header class="top-header">
+
+    <div>
+        <h1>Sales Recording System</h1>
+        <p>Manage your sales and inventory easily</p>
+    </div>
+
+    <div class="profile">
+        Admin
+    </div>
+
+</header>
+
+
+<!-- Navigation -->
+<nav class="main-nav">
+
+    <a href="/" class="active">
+        Dashboard
+    </a>
+
+    <a href="/products">
+        Products
+    </a>
+
+    <a href="/sales">
+        Sales
+    </a>
+
+    <a href="/reports">
+        Reports
+    </a>
+
+</nav>
+
+
+<!-- Main Content -->
+<main class="dashboard-main">
+
+    <div class="dashboard-title">
+
+        <h2>Dashboard Overview</h2>
+
+        <p>
+            Here's what's happening with your sales and inventory.
+        </p>
+
+    </div>
+
+
+    <!-- Dashboard Cards -->
+    <section class="dashboard-cards">
+
+        <!-- Total Sales -->
+        <div class="card">
+
+            <div class="card-icon">
+                💰
+            </div>
+
+            <div>
+
+                <h3>Total Sales</h3>
+
+                <p>
+                    {{ total_sales }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Total Products -->
+        <div class="card">
+
+            <div class="card-icon">
+                📦
+            </div>
+
+            <div>
+
+                <h3>Total Products</h3>
+
+                <p>
+                    {{ total_products }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Revenue -->
+        <div class="card">
+
+            <div class="card-icon">
+                📊
+            </div>
+
+            <div>
+
+                <h3>Revenue</h3>
+
+                <p>
+                    GH₵ {{ "{:,.2f}".format(total_revenue | float) }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Today's Sales -->
+        <div class="card">
+
+            <div class="card-icon">
+                🛒
+            </div>
+
+            <div>
+
+                <h3>Today's Sales</h3>
+
+                <p>
+                    {{ todays_sales }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Recent Sales -->
+    <section class="recent-sales">
+
+        <div class="section-title">
+
+            <div>
+
+                <h2>Recent Sales</h2>
+
+                <p>
+                    Your latest recorded sales
+                </p>
+
+            </div>
+
+            <a href="/sales" class="view-all-btn">
+                View All
+            </a>
+
+        </div>
+
+
+        <!-- Sales Table -->
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Product</th>
+
+                        <th>Quantity</th>
+
+                        <th>Total</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for sale in recent_sales %}
+
+                    <tr>
+
+                        <td>
+                            {{ sale["product_name"] }}
+                        </td>
+
+                        <td>
+                            {{ sale["quantity"] }}
+                        </td>
+
+                        <td>
+                            GH₵ {{ "{:,.2f}".format(sale["total"]|float) }}
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="3" class="empty-message">
+                            No sales today yet.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+```
+
+</body>
+
+</html>

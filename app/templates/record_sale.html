@@ -1,0 +1,122 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Record Sale - Sales Recording System</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+```
+
+</head>
+
+<body>
+
+```
+<div class="add-product-container">
+
+    <h1>Record Sale</h1>
+
+    <form method="POST" class="product-form">
+
+        <!-- Product -->
+        <div class="form-row">
+
+            <label for="product_id">
+                Product
+            </label>
+
+            <select
+                id="product_id"
+                name="product_id"
+                required
+            >
+
+                <option value="">
+                    Select a product
+                </option>
+
+                {% for product in products %}
+
+                <option value="{{ product['id'] }}">
+                    {{ product['name'] }} -
+                    GH₵ {{ "%.2f"|format(product['price']) }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- Quantity -->
+        <div class="form-row">
+
+            <label for="quantity">
+                Quantity Sold
+            </label>
+
+            <input
+                type="number"
+                id="quantity"
+                name="quantity"
+                placeholder="Enter quantity sold"
+                min="1"
+                required
+            >
+
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% if messages %}
+
+        {% for category, message in messages %}
+
+            <div class="error-message">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+
+
+        <!-- Buttons -->
+        <div class="form-buttons">
+
+            <button
+                type="submit"
+                class="save-btn"
+            >
+                Record Sale
+            </button>
+
+            <a
+                href="/sales"
+                class="cancel-btn"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+```
+
+</body>
+
+</html>
