@@ -17,7 +17,7 @@
 
         <form method="POST" class="product-form">
 
-            <!-- Product Name -->
+            
             <div class="form-row">
                 <label for="name">Product Name</label>
 
@@ -31,7 +31,7 @@
             </div>
 
 
-            <!-- Category -->
+    
             <div class="form-row">
                 <label for="category">Category</label>
 
@@ -45,7 +45,7 @@
             </div>
 
 
-            <!-- Price -->
+            
             <div class="form-row">
                 <label for="price">Price</label>
 
@@ -59,7 +59,7 @@
             </div>
 
 
-            <!-- Quantity -->
+            
             <div class="form-row">
                 <label for="quantity">Quantity</label>
 
@@ -73,7 +73,7 @@
             </div>
 
 
-            <!-- Save Button -->
+
             <button type="submit" class="save-btn">
                 Save Product
             </button>
@@ -85,10 +85,10 @@
     const priceInput = document.getElementById("price");
 
     priceInput.addEventListener("input", function () {
-        // Remove anything that is not a number
+        
         let value = this.value.replace(/[^0-9]/g, "");
 
-        // Add commas automatically
+        
         if (value) {
             this.value = Number(value).toLocaleString("en-US");
         }

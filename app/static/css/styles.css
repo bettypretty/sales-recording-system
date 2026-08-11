@@ -10,9 +10,7 @@ padding: 0;
 background-color: #f4f6f8;
 }
 
-/* =========================================================
-HEADER
-========================================================= */
+
 
 .top-header {
 background-color: #1565c0;
@@ -40,9 +38,6 @@ border-radius: 20px;
 font-weight: bold;
 }
 
-/* =========================================================
-NAVIGATION
-========================================================= */
 
 nav {
 background-color: #263238;
@@ -60,9 +55,7 @@ nav a:hover {
 color: #42a5f5;
 }
 
-/* =========================================================
-MAIN CONTENT
-========================================================= */
+
 
 main {
 padding: 30px;
@@ -72,9 +65,7 @@ main h2 {
 margin-bottom: 20px;
 }
 
-/* =========================================================
-DASHBOARD
-========================================================= */
+
 
 .dashboard-main {
 padding: 30px;
@@ -93,7 +84,7 @@ margin: 0;
 color: #777;
 }
 
-/* Dashboard Cards */
+
 
 .dashboard-cards {
 display: grid;
@@ -133,9 +124,6 @@ font-size: 26px;
 font-weight: bold;
 }
 
-/* =========================================================
-RECENT SALES
-========================================================= */
 
 .recent-sales {
 margin-top: 30px;
@@ -173,9 +161,7 @@ text-decoration: none;
 background-color: #1d4ed8;
 }
 
-/* =========================================================
-TABLES
-========================================================= */
+
 
 .table-container {
 background-color: white;
@@ -220,9 +206,7 @@ padding: 30px !important;
 color: #777;
 }
 
-/* =========================================================
-PRODUCTS PAGE
-========================================================= */
+
 
 .products-section {
 padding: 30px;
@@ -245,7 +229,7 @@ margin-top: 6px;
 color: #777;
 }
 
-/* Add Product Button */
+
 
 .add-product-btn {
 display: inline-block;
@@ -263,7 +247,7 @@ font-size: 14px;
 background-color: #1d4ed8;
 }
 
-/* Search */
+
 
 .search-box {
 margin-bottom: 20px;
@@ -283,7 +267,7 @@ outline: none;
 border-color: #2563eb;
 }
 
-/* Product Status */
+
 
 .status {
 padding: 6px 10px;
@@ -307,7 +291,7 @@ background-color: #fee2e2;
 color: #991b1b;
 }
 
-/* Product Action Buttons */
+
 
 .edit-btn,
 .delete-btn {
@@ -336,9 +320,6 @@ background-color: #c7d2fe;
 background-color: #fecaca;
 }
 
-/* =========================================================
-ADD / EDIT PRODUCT PAGE
-========================================================= */
 
 .add-product-container {
 margin-top: 60px;
@@ -349,7 +330,7 @@ margin-left: 50px;
 margin-bottom: 35px;
 }
 
-/* White Form Box */
+
 
 .product-form {
 width: 650px;
@@ -359,25 +340,25 @@ border-radius: 12px;
 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
-/* Form Rows */
+
 
 .form-row {
 display: flex;
 align-items: center;
 
 
-/* Creates space between form sections */
+
 margin-bottom: 35px;
 
 }
-/* Form Labels */
+
 
 .form-row label {
 width: 140px;
 font-weight: 600;
 }
 
-/* Form Inputs */
+
 
 .form-row input {
 flex: 1;
@@ -393,7 +374,7 @@ outline: none;
 border-color: #2563eb;
 }
 
-/* Form Buttons */
+
 
 .form-buttons {
 display: flex;
@@ -402,7 +383,6 @@ gap: 15px;
 margin-top: 25px;
 }
 
-/* Save Button */
 
 .save-btn {
 display: block;
@@ -427,7 +407,7 @@ cursor: pointer;
 background-color: #1d4ed8;
 }
 
-/* Cancel Button */
+
 
 .cancel-btn {
 display: inline-block;
@@ -448,7 +428,7 @@ border-radius: 8px;
 background-color: #d1d5db;
 }
 
-/* Error Message */
+
 
 .error-message {
 margin-top: 15px;
@@ -460,9 +440,7 @@ font-size: 14px;
 text-align: center;
 }
 
-/* =========================================================
-RESPONSIVE DESIGN
-========================================================= */
+
 
 @media (max-width: 900px) {
 

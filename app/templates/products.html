@@ -11,7 +11,7 @@
 
 <body>
 
-    <!-- Sidebar -->
+    
     <aside class="sidebar">
         <h2>Sales System</h2>
 
@@ -24,10 +24,10 @@
     </aside>
 
 
-    <!-- Main Content -->
+
     <main class="main-content">
 
-        <!-- Top Header -->
+        
         <header class="top-header">
 
             <div>
@@ -42,7 +42,7 @@
         </header>
 
 
-        <!-- Products Section -->
+        
         <section class="products-section">
 
             <div class="section-header">
@@ -57,7 +57,7 @@
             </div>
 
 
-            <!-- Search -->
+    
             <div class="search-box">
                 <input
                     type="text"
@@ -67,7 +67,7 @@
             </div>
 
 
-            <!-- Products Table -->
+            
             <div class="table-container">
 
                 <table>
@@ -91,27 +91,27 @@
 
     <tr
      class="product-row" >
-        <!-- Product Name -->
+        
         <td>
             {{ product["name"] }}
         </td>
 
-        <!-- Category -->
+    
         <td>
             {{ product["category"] }}
         </td>
 
-        <!-- Price -->
+        
         <td>
             GH₵ {{ "{:,.2f}".format(product["price"]|float) }}
         </td>
 
-        <!-- Stock -->
+        
         <td>
             {{ product["quantity"] }}
         </td>
 
-        <!-- Status -->
+    
         <td>
 
             {% if product["quantity"] == 0 %}
@@ -136,7 +136,7 @@
 
         </td>
 
-        <!-- Actions -->
+        
         <td>
 
            <a

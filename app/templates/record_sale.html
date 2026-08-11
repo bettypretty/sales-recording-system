@@ -1,12 +1,10 @@
-
-
 <!DOCTYPE html>
 
 <html lang="en">
 
 <head>
 
-```
+
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,20 +12,20 @@
 <title>Record Sale - Sales Recording System</title>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-```
+
 
 </head>
 
 <body>
 
-```
+
 <div class="add-product-container">
 
     <h1>Record Sale</h1>
 
     <form method="POST" class="product-form">
 
-        <!-- Product -->
+        
         <div class="form-row">
 
             <label for="product_id">
@@ -48,7 +46,7 @@
 
                 <option value="{{ product['id'] }}">
                     {{ product['name'] }} -
-                    GH₵ {{ "%.2f"|format(product['price']) }}
+                    GH₵ {{ product['price']}}
                 </option>
 
                 {% endfor %}
@@ -58,7 +56,7 @@
         </div>
 
 
-        <!-- Quantity -->
+        
         <div class="form-row">
 
             <label for="quantity">
@@ -93,7 +91,7 @@
 {% endwith %}
 
 
-        <!-- Buttons -->
+        
         <div class="form-buttons">
 
             <button
@@ -115,7 +113,7 @@
     </form>
 
 </div>
-```
+
 
 </body>
 
