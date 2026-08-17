@@ -54,8 +54,28 @@ def create_tables():
         )
     """)
 
-    # Save the changes to the database
+    # Create the users table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
+            email TEXT NOT NULL,
+            password TEXT NOT NULL
+        )
+    """)
+
+   # Add username column if it is missing from an existing users table
+    try:
+        cursor.execute(
+            "ALTER TABLE users ADD COLUMN username TEXT"
+        )
+    except sqlite3.OperationalError:
+        pass
+
+    # Save the changes
     connection.commit()
 
     # Close the database connection
     connection.close()
+
+   

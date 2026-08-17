@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, session
 from app.database import create_tables, get_db_connection
 
 
@@ -9,7 +9,7 @@ app = Flask(
     static_folder="app/static"
 )
 
-# Secret key for Flask flash messages
+# Secret key for Flask sessions and flash messages
 app.secret_key = "sales-recording-system-secret"
 
 
@@ -17,31 +17,44 @@ app.secret_key = "sales-recording-system-secret"
 create_tables()
 
 
+# Check if user is logged in
+def login_required():
 
-# Dashboard route
+    if "user_id" not in session:
 
+        flash("Please login first.", "error")
+
+        return redirect("/login")
+
+    return None
+
+# DASHBOARD
 @app.route("/")
 def dashboard():
 
-    # Connect to the database
+    print("USER ID:", session.get("user_id"))
+
+    if "user_id" not in session:
+        return redirect("/login")
+
     connection = get_db_connection()
 
-    # Get total number of products
+    # Total number of products
     total_products = connection.execute(
         "SELECT COUNT(*) FROM products"
     ).fetchone()[0]
 
-    # Get total revenue from all sales
+    # Total revenue
     total_revenue = connection.execute(
         "SELECT COALESCE(SUM(total), 0) FROM sales"
     ).fetchone()[0]
 
-    # Get total quantity of products sold
+    # Total quantity sold
     total_sales = connection.execute(
         "SELECT COALESCE(SUM(quantity), 0) FROM sales"
     ).fetchone()[0]
 
-    # Get today's sales count
+    # Today's sales count
     todays_sales = connection.execute(
         """
         SELECT COUNT(*)
@@ -50,7 +63,7 @@ def dashboard():
         """
     ).fetchone()[0]
 
-    # Get recent sales
+    # Recent sales
     recent_sales = connection.execute(
         """
         SELECT *
@@ -61,10 +74,8 @@ def dashboard():
         """
     ).fetchall()
 
-    # Close database connection
     connection.close()
 
-    # Send the information to dashboard.html
     return render_template(
         "dashboard.html",
         total_products=total_products,
@@ -73,82 +84,76 @@ def dashboard():
         todays_sales=todays_sales,
         recent_sales=recent_sales
     )
-
-
-
-# Products route
-
+    
+# PRODUCTS
 @app.route("/products")
 def products():
 
-    # Connect to the database
+    login_check = login_required()
+
+    if login_check:
+        return login_check
+
     connection = get_db_connection()
 
-    # Get all products from the database
     products = connection.execute(
         "SELECT * FROM products ORDER BY id DESC"
     ).fetchall()
 
-    # Close the database connection
     connection.close()
 
-    # Send products to the HTML page
     return render_template(
         "products.html",
         products=products
     )
 
 
-
-# Sales route
-
+# SALES
 @app.route("/sales")
 def sales():
 
-    # Connect to the database
+    login_check = login_required()
+
+    if login_check:
+        return login_check
+
     connection = get_db_connection()
 
-    # Get all recorded sales
     sales = connection.execute(
         "SELECT * FROM sales ORDER BY id DESC"
     ).fetchall()
 
-    # Close connection
     connection.close()
 
-    # Send sales to the page
     return render_template(
         "sales.html",
         sales=sales
     )
 
 
-
-# Reports route
-
-
+# REPORTS
 @app.route("/reports")
 def reports():
 
-    # Connect to the database
+    login_check = login_required()
+
+    if login_check:
+        return login_check
+
     connection = get_db_connection()
 
-    # Get total number of products
     total_products = connection.execute(
         "SELECT COUNT(*) FROM products"
     ).fetchone()[0]
 
-    # Get total revenue from all sales
     total_revenue = connection.execute(
         "SELECT COALESCE(SUM(total), 0) FROM sales"
     ).fetchone()[0]
 
-    # Get total quantity of products sold
     total_sales = connection.execute(
         "SELECT COALESCE(SUM(quantity), 0) FROM sales"
     ).fetchone()[0]
 
-    # Get today's sales count
     todays_sales = connection.execute(
         """
         SELECT COUNT(*)
@@ -157,7 +162,6 @@ def reports():
         """
     ).fetchone()[0]
 
-    # Get complete sales history
     sales = connection.execute(
         """
         SELECT *
@@ -166,10 +170,8 @@ def reports():
         """
     ).fetchall()
 
-    # Close database connection
     connection.close()
 
-    # Send the information to reports.html
     return render_template(
         "reports.html",
         total_products=total_products,
@@ -180,24 +182,27 @@ def reports():
     )
 
 
-# Add Product route
-
+ # ADD PRODUCT
 @app.route("/add_product", methods=["GET", "POST"])
 def add_product():
 
+    login_check = login_required()
+
+    if login_check:
+        return login_check
+
     if request.method == "POST":
 
-        # Get information from the form
         name = request.form["name"]
         category = request.form["category"]
+
         price = request.form["price"].replace(",", "")
         price = float(price)
+
         quantity = request.form["quantity"]
 
-        # Connect to the database
         connection = get_db_connection()
 
-        # Add the product to the database
         connection.execute(
             """
             INSERT INTO products (name, category, price, quantity)
@@ -206,63 +211,54 @@ def add_product():
             (name, category, price, quantity)
         )
 
-        # Save changes
         connection.commit()
-
-        # Close connection
         connection.close()
 
-        # Return to Products page
         return redirect("/products")
 
-    # Show Add Product form
     return render_template("add_product.html")
 
 
-
-# Delete Product route
-
+ # DELETE PRODUCT
 @app.route("/delete_product/<int:product_id>", methods=["POST"])
 def delete_product(product_id):
 
-    # Connect to the database
+    login_check = login_required()
+
+    if login_check:
+        return login_check
+
     connection = get_db_connection()
 
-    # Delete the selected product
     connection.execute(
         "DELETE FROM products WHERE id = ?",
         (product_id,)
     )
 
-    # Save the change
     connection.commit()
-
-    # Close the database connection
     connection.close()
 
-    # Return to Products page
     return redirect("/products")
 
 
-
-# Edit Product route
-
+  # EDIT PRODUCT 
 @app.route("/edit_product/<int:product_id>", methods=["GET", "POST"])
 def edit_product(product_id):
 
-    # Connect to the database
+    login_check = login_required()
+
+    if login_check:
+        return login_check
+
     connection = get_db_connection()
 
-    # If the form is submitted
     if request.method == "POST":
 
-        # Get the updated information
         name = request.form["name"]
         category = request.form["category"]
         price = request.form["price"]
         quantity = request.form["quantity"]
 
-        # Update the product
         connection.execute(
             """
             UPDATE products
@@ -272,55 +268,45 @@ def edit_product(product_id):
             (name, category, price, quantity, product_id)
         )
 
-        # Save changes
         connection.commit()
-
-        # Close connection
         connection.close()
 
-        # Return to Products page
         return redirect("/products")
 
-    # Get the product we want to edit
     product = connection.execute(
         "SELECT * FROM products WHERE id = ?",
         (product_id,)
     ).fetchone()
 
-    # Close connection
     connection.close()
 
-    # Open the edit form
     return render_template(
         "edit_product.html",
         product=product
     )
 
 
-
-# Record Sale route
-
-
+ # RECORD SALE
 @app.route("/record_sale", methods=["GET", "POST"])
 def record_sale():
 
-    # Connect to database
+    login_check = login_required()
+
+    if login_check:
+        return login_check
+
     connection = get_db_connection()
 
-    # If form is submitted
     if request.method == "POST":
 
-        # Get product and quantity
         product_id = request.form["product_id"]
         quantity = int(request.form["quantity"])
 
-        # Get selected product
         product = connection.execute(
             "SELECT * FROM products WHERE id = ?",
             (product_id,)
         ).fetchone()
 
-        # Check if product exists
         if product is None:
 
             connection.close()
@@ -329,34 +315,33 @@ def record_sale():
 
             return redirect("/record_sale")
 
-        # Check available stock
         if quantity > product["quantity"]:
 
-            # Show error message
             flash(
                 f"Insufficient stock. Only {product['quantity']} items available.",
                 "error"
             )
 
-            # Close database connection
             connection.close()
 
-            # Return to Record Sale page
             return redirect("/record_sale")
 
-        # Calculate total
         total = product["price"] * quantity
 
-        # Save the sale
         connection.execute(
             """
-            INSERT INTO sales (product_name, quantity, total)
-            VALUES (?, ?, ?)
+            INSERT INTO sales
+            (product_name, category, quantity, total)
+            VALUES (?, ?, ?, ?)
             """,
-            (product["name"], quantity, total)
+            (
+                product["name"],
+                product["category"],
+                quantity,
+                total
+            )
         )
 
-        # Reduce product stock
         connection.execute(
             """
             UPDATE products
@@ -366,33 +351,240 @@ def record_sale():
             (quantity, product_id)
         )
 
-        # Save changes
         connection.commit()
-
-        # Close connection
         connection.close()
 
-        # Return to Sales page
         return redirect("/sales")
 
-    # Get all products
     products = connection.execute(
         "SELECT * FROM products ORDER BY name"
     ).fetchall()
 
-    # Close connection
     connection.close()
 
-    # Show Record Sale form
     return render_template(
         "record_sale.html",
         products=products
     )
 
 
+# LOGIN
+@app.route("/login", methods=["GET", "POST"])
+def login():
 
-# Start application
+   
+    if request.method == "POST":
+
+        email = request.form["email"]
+        password = request.form["password"]
+
+        connection = get_db_connection()
+
+        user = connection.execute(
+            """
+            SELECT *
+            FROM users
+            WHERE email = ? AND password = ?
+            """,
+            (email, password)
+        ).fetchone()
+
+        connection.close()
+
+        if user:
+
+            session["user_id"] = user["id"]
+
+            session["username"] = user["username"]
+
+            return redirect("/")
+
+        else:
+
+            flash(
+                "Invalid email or password.",
+                "error"
+            )
+
+            return redirect("/login")
+
+    return render_template("login.html")
 
 
+  # CREATE ACCOUNT
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+    if request.method == "POST":
+
+        username = request.form["username"]
+        email = request.form["email"]
+        password = request.form["password"]
+        confirm_password = request.form["confirm_password"]
+
+        if password != confirm_password:
+
+            flash(
+                "Passwords do not match.",
+                "error"
+            )
+
+            return redirect("/register")
+
+        connection = get_db_connection()
+
+        existing_user = connection.execute(
+            "SELECT * FROM users WHERE username = ?",
+            (username,)
+        ).fetchone()
+
+        if existing_user:
+
+            connection.close()
+
+            flash(
+                "Username already exists.",
+                "error"
+            )
+
+            return redirect("/register")
+
+        existing_email = connection.execute(
+            "SELECT * FROM users WHERE email = ?",
+            (email,)
+        ).fetchone()
+
+        if existing_email:
+
+            connection.close()
+
+            flash(
+                "Email already exists.",
+                "error"
+            )
+
+            return redirect("/register")
+
+        connection.execute(
+            """
+            INSERT INTO users (username, email, password)
+            VALUES (?, ?, ?)
+            """,
+            (username, email, password)
+        )
+
+        connection.commit()
+        connection.close()
+
+        flash(
+            "Account created successfully. Please login.",
+            "success"
+        )
+
+        return redirect("/login")
+
+    return render_template("create_account.html")
+
+
+  # LOGOUT
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    flash(
+        "You have been logged out.",
+        "success"
+    )
+
+    return redirect("/login")
+
+
+# FORGOT PASSWORD
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    
+    if request.method == "POST":
+        email = request.form["email"]
+        
+        connection = get_db_connection()
+        
+        user = connection.execute(
+    "SELECT * FROM users WHERE email = ?",
+    (email,)
+).fetchone()
+        connection.close()
+        if user:
+
+            session["reset_user_id"] = user["id"]
+
+            return redirect("/reset-password")
+
+        else:
+
+         flash(
+                "No account found with that email.",
+                "error"
+            )
+
+    return render_template ("forgot_password.html")
+
+
+# Reset Password
+
+@app.route("/reset-password", methods=["GET", "POST"])
+def reset_password():
+
+    if "reset_user_id" not in session:
+        return redirect("/forgot-password")
+
+    if request.method == "POST":
+
+        password = request.form["password"]
+        confirm_password = request.form["confirm_password"]
+
+        if password != confirm_password:
+
+            flash(
+                "Passwords do not match.",
+                "error"
+            )
+
+            return redirect("/reset-password")
+
+        connection = get_db_connection()
+
+        connection.execute(
+            """
+            UPDATE users
+            SET password = ?
+            WHERE id = ?
+            """,
+            (
+                password,
+                session["reset_user_id"]
+            )
+        )
+
+        connection.commit()
+        connection.close()
+
+        session.pop("reset_user_id", None)
+
+        flash(
+            "Password reset successfully. Please login.",
+            "success"
+        )
+
+        return redirect("/login")
+
+    return render_template("reset_password.html")
+ # START APPLICATION
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=True
+    )
+    

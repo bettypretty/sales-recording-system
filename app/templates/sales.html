@@ -1,144 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}
+Sales - Sales Recording System
+{% endblock %}
 
 
-
-<!DOCTYPE html>
-
-<html lang="en">
-
-<head>
+{% block heading %}
+Sales
+{% endblock %}
 
 
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Sales - Sales Recording System</title>
-
-<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% block subtitle %}
+Record and manage sales.
+{% endblock %}
 
 
-</head>
+{% block content %}
 
-<body>
+<main class="products-section">
 
-
-<aside class="sidebar">
-
-    <h2>Sales System</h2>
-
-    <nav>
-
-        <a href="/">Dashboard</a>
-
-        <a href="/products">Products</a>
-
-        <a href="/sales">Sales</a>
-
-        <a href="/reports">Reports</a>
-
-    </nav>
-
-</aside>
-
-
-
-<main class="main-content">
-
-    
-    <header class="top-header">
+    <div class="section-header">
 
         <div>
 
-            <h1>Sales Recording System</h1>
+            <h2>Sales</h2>
 
-            <p>Record and manage sales</p>
-
-        </div>
-
-        <div class="profile">
-            Admin
-        </div>
-
-    </header>
-
-
-    <section class="sales-section">
-
-        <div class="section-header">
-
-            <div>
-
-                <h2>Sales</h2>
-
-                <p>Record your product sales.</p>
-
-            </div>
-
-            <a href="/record_sale" class="add-product-btn">
-                + Record Sale
-            </a>
+            <p>
+                Record your product sales.
+            </p>
 
         </div>
 
 
-        
-        <div class="table-container">
+        <a href="/record_sale" class="add-product-btn">
+            + Record Sale
+        </a>
 
-            <table>
+    </div>
 
-                <thead>
 
-                    <tr>
+    
+    <div class="table-container">
 
-                        <th>Product</th>
+        <table>
 
-                        <th>Quantity</th>
+            <thead>
 
-                        <th>Total</th>
+                <tr>
 
-                        <th>Date</th>
+                    <th>Product</th>
 
-                    </tr>
+                    <th>Quantity</th>
 
-                </thead>
+                    <th>Total</th>
 
-                <tbody>
+                    <th>Date</th>
 
-                    {% for sale in sales %}
+                </tr>
 
-                    <tr>
+            </thead>
 
-                        <td>
-                            {{ sale["product_name"] }}
-                        </td>
 
-                        <td>
-                            {{ sale["quantity"] }}
-                        </td>
+            <tbody>
 
-                        <td>
-                            GH₵ {{ "{:,.2f}".format(sale["total"]|float) }}
-                        </td>
+                {% for sale in sales %}
 
-                        <td>
-                            {{ sale["date"] }}
-                        </td>
+                <tr>
 
-                    </tr>
+                    <td>
+                        {{ sale["product_name"] }}
+                    </td>
 
-                    {% endfor %}
+                    <td>
+                        {{ sale["quantity"] }}
+                    </td>
 
-                </tbody>
+                    <td>
+                        GH₵ {{ "{:,.2f}".format(sale["total"] | float) }}
+                    </td>
 
-            </table>
+                    <td>
+                        {{ sale["date"] }}
+                    </td>
 
-        </div>
+                </tr>
 
-    </section>
+                {% else %}
+
+                <tr>
+
+                    <td colspan="4" class="empty-message">
+                        No sales recorded yet.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </main>
 
-
-</body>
-
-</html>
+{% endblock %}

@@ -1,244 +1,294 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+    <title>Dashboard - Sales Recording System</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Dashboard - Sales Recording System</title>
-
-<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/styles.css') }}">
 
 </head>
 
 <body>
 
-
-
-<header class="top-header">
-
-    <div>
-        <h1>Sales Recording System</h1>
-        <p>Manage your sales and inventory easily</p>
-    </div>
-
-    <div class="profile">
-        Admin
-    </div>
-
-</header>
-
-
-
-<nav class="main-nav">
-
-    <a href="/" class="active">
-        Dashboard
-    </a>
-
-    <a href="/products">
-        Products
-    </a>
-
-    <a href="/sales">
-        Sales
-    </a>
-
-    <a href="/reports">
-        Reports
-    </a>
-
-</nav>
-
-
-
-<main class="dashboard-main">
-
-    <div class="dashboard-title">
-
-        <h2>Dashboard Overview</h2>
-
-        <p>
-            Here's what's happening with your sales and inventory.
-        </p>
-
-    </div>
-
-
     
-    <section class="dashboard-cards">
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-header">
+            <h2>Sales System</h2>
+        </div>
 
         
-        <div class="card">
+        <div class="sidebar-user">
 
-            <div class="card-icon">
-                💰
+            <div class="user-icon">
+                👤
             </div>
 
             <div>
-
-                <h3>Total Sales</h3>
-
-                <p>
-                    {{ total_sales }}
-                </p>
-
+                <strong>{{ session["username"] }}</strong>
+                <small>Account</small>
             </div>
 
         </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="/" class="sidebar-link">
+                <span>🏠</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/products" class="sidebar-link">
+                <span>📦</span>
+                <span>Products</span>
+            </a>
+
+            <a href="/sales" class="sidebar-link">
+                <span>💰</span>
+                <span>Sales</span>
+            </a>
+
+            <a href="/reports" class="sidebar-link">
+                <span>📊</span>
+                <span>Reports</span>
+            </a>
+
+        </nav>
 
 
         
-        <div class="card">
+        <div class="sidebar-bottom">
 
-            <div class="card-icon">
-                📦
-            </div>
-
-            <div>
-
-                <h3>Total Products</h3>
-
-                <p>
-                    {{ total_products }}
-                </p>
-
-            </div>
-
-        </div>
-
-
-    
-        <div class="card">
-
-            <div class="card-icon">
-                📊
-            </div>
-
-            <div>
-
-                <h3>Revenue</h3>
-
-                <p>
-                    GH₵ {{ "{:,.2f}".format(total_revenue | float) }}
-                </p>
-
-            </div>
-
-        </div>
-
-
-        
-        <div class="card">
-
-            <div class="card-icon">
-                🛒
-            </div>
-
-            <div>
-
-                <h3>Today's Sales</h3>
-
-                <p>
-                    {{ todays_sales }}
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    
-    <section class="recent-sales">
-
-        <div class="section-title">
-
-            <div>
-
-                <h2>Recent Sales</h2>
-
-                <p>
-                    Your latest recorded sales
-                </p>
-
-            </div>
-
-            <a href="/sales" class="view-all-btn">
-                View All
+            <a href="/logout" class="sidebar-link logout-link">
+                <span>🚪</span>
+                <span>Logout</span>
             </a>
 
         </div>
 
+    </aside>
+
+
+    
+    <div class="page-container">
 
         
-        <div class="table-container">
+        <header class="top-header">
 
-            <table>
+        
+            <button class="sidebar-toggle" id="sidebarToggle">
+                ☰
+            </button>
 
-                <thead>
+            
+            <div class="welcome-section">
 
-                    <tr>
+                <h1>
+                    Welcome, {{ session["username"] }} 👋
+                </h1>
 
-                        <th>Product</th>
+                <p>
+                    Manage your sales and inventory easily
+                </p>
 
-                        <th>Quantity</th>
+            </div>
 
-                        <th>Total</th>
-
-                    </tr>
-
-                </thead>
+        </header>
 
 
-                <tbody>
+        
+        <main class="dashboard-main">
 
-                    {% for sale in recent_sales %}
+            
+            <div class="dashboard-title">
 
-                    <tr>
+                <h2>Dashboard Overview</h2>
 
-                        <td>
-                            {{ sale["product_name"] }}
-                        </td>
+                <p>
+                    Here's what's happening with your sales and inventory.
+                </p>
 
-                        <td>
-                            {{ sale["quantity"] }}
-                        </td>
+            </div>
 
-                        <td>
-                            GH₵ {{ "{:,.2f}".format(sale["total"]|float) }}
-                        </td>
+            <section class="dashboard-cards">
 
-                    </tr>
+                <div class="card">
 
-                    {% else %}
+                    <div class="card-icon">
+                        💰
+                    </div>
 
-                    <tr>
+                    <div>
 
-                        <td colspan="3" class="empty-message">
-                            No sales today yet.
-                        </td>
+                        <h3>Total Sales</h3>
 
-                    </tr>
+                        <p>
+                            {{ total_sales }}
+                        </p>
 
-                    {% endfor %}
+                    </div>
 
-                </tbody>
+                </div>
+                <div class="card">
 
-            </table>
+                    <div class="card-icon">
+                        📦
+                    </div>
 
-        </div>
+                    <div>
 
-    </section>
+                        <h3>Total Products</h3>
 
-</main>
+                        <p>
+                            {{ total_products }}
+                        </p>
 
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <div class="card-icon">
+                        📊
+                    </div>
+
+                    <div>
+
+                        <h3>Revenue</h3>
+
+                        <p>
+                            GH₵ {{ "{:,.2f}".format(total_revenue | float) }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <div class="card-icon">
+                        🛒
+                    </div>
+
+                    <div>
+
+                        <h3>Today's Sales</h3>
+
+                        <p>
+                            {{ todays_sales }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            
+            <section class="recent-sales">
+
+                <div class="section-title">
+
+                    <div>
+
+                        <h2>Recent Sales</h2>
+
+                        <p>
+                            Your latest recorded sales
+                        </p>
+
+                    </div>
+
+                    <a href="/sales" class="view-all-btn">
+                        View All
+                    </a>
+
+                </div>
+
+
+                
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for sale in recent_sales %}
+
+                            <tr>
+
+                                <td>
+                                    {{ sale["product_name"] }}
+                                </td>
+
+                                <td>
+                                    {{ sale["quantity"] }}
+                                </td>
+
+                                <td>
+                                    GH₵ {{ "{:,.2f}".format(sale["total"] | float) }}
+                                </td>
+
+                            </tr>
+
+                            {% else %}
+
+                            <tr>
+
+                                <td colspan="3" class="empty-message">
+                                    No sales today yet.
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    
+    <script>
+
+        const sidebar = document.getElementById("sidebar");
+        const sidebarToggle = document.getElementById("sidebarToggle");
+
+        sidebarToggle.addEventListener("click", function () {
+
+            sidebar.classList.toggle("active");
+
+        });
+
+    </script>
 
 </body>
 

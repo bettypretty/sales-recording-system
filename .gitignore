@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+.venv/
+
+# Database
+*.db
+
+# Environment variables
+.env
+
+# ZIP files
+*.zip

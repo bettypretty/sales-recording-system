@@ -1,263 +1,190 @@
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Reports - Sales Recording System</title>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
-</head>
-
-<body>
-
-    
-    <aside class="sidebar">
-
-        <h2>Sales System</h2>
-
-        <nav>
-
-            <a href="/">
-                Dashboard
-            </a>
-
-            <a href="/products">
-                Products
-            </a>
-
-            <a href="/sales">
-                Sales
-            </a>
-
-            <a href="/reports" class="active">
-                Reports
-            </a>
-
-        </nav>
-
-    </aside>
+{% block title %}
+Reports - Sales Recording System
+{% endblock %}
 
 
-    
-    <main class="main-content">
+{% block heading %}
+Reports
+{% endblock %}
 
-    
-        <header class="top-header">
+
+{% block subtitle %}
+View your sales reports and history.
+{% endblock %}
+
+
+{% block content %}
+
+<main class="dashboard-main">
+
+    <div class="dashboard-title">
+
+        <h2>Sales Reports</h2>
+
+        <p>
+            View your sales summary and sales history.
+        </p>
+
+    </div>
+
+
+    <section class="dashboard-cards">
+
+        <div class="card">
+
+            <div class="card-icon">
+                🧾
+            </div>
 
             <div>
 
-                <h1>Sales Recording System</h1>
+                <h3>Total Sales</h3>
 
-                <p>View your sales reports and history</p>
-
-            </div>
-
-            <div class="profile">
-                Admin
-            </div>
-
-        </header>
-
-
-
-        <section class="sales-section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <h2>Sales Reports</h2>
-
-                    <p>
-                        View your sales summary and sales history.
-                    </p>
-
-                </div>
+                <p>
+                    {{ total_sales }}
+                </p>
 
             </div>
 
+        </div>
 
-            
-            <section class="dashboard-cards">
+        <div class="card">
 
+            <div class="card-icon">
+                📦
+            </div>
 
-                
-                <div class="card">
+            <div>
 
-                    <div class="card-icon">
-                        🧾
-                    </div>
+                <h3>Total Products</h3>
 
-                    <div>
+                <p>
+                    {{ total_products }}
+                </p>
 
-                        <h3>Total Sales</h3>
+            </div>
 
-                        <p>
-                            {{ total_sales }}
-                        </p>
+        </div>
 
-                    </div>
+        <div class="card">
 
-                </div>
+            <div class="card-icon">
+                💰
+            </div>
 
+            <div>
 
-                
-                <div class="card">
+                <h3>Total Revenue</h3>
 
-                    <div class="card-icon">
-                        📦
-                    </div>
+                <p>
+                    GH₵ {{ "{:,.2f}".format(total_revenue | float) }}
+                </p>
 
-                    <div>
+            </div>
 
-                        <h3>Total Products</h3>
+        </div>
 
-                        <p>
-                            {{ total_products }}
-                        </p>
+        <div class="card">
 
-                    </div>
+            <div class="card-icon">
+                🛒
+            </div>
 
-                </div>
+            <div>
 
+                <h3>Today's Sales</h3>
 
-            
-                <div class="card">
+                <p>
+                    {{ todays_sales }}
+                </p>
 
-                    <div class="card-icon">
-                        💰
-                    </div>
+            </div>
 
-                    <div>
+        </div>
 
-                        <h3>Total Revenue</h3>
+    </section>
 
-                        <p>
-                            GH₵ {{ "{:,.2f}".format(total_revenue | float) }}
-                        </p>
+    <section class="recent-sales">
 
-                    </div>
+        <div class="section-title">
 
-                </div>
+            <div>
 
+                <h2>Sales History</h2>
 
-        
-                <div class="card">
+                <p>
+                    Complete record of your sales.
+                </p>
 
-                    <div class="card-icon">
-                        🛒
-                    </div>
+            </div>
 
-                    <div>
+        </div>
 
-                        <h3>Today's Sales</h3>
 
-                        <p>
-                            {{ todays_sales }}
-                        </p>
+        <div class="table-container">
 
-                    </div>
+            <table>
 
-                </div>
+                <thead>
 
-            </section>
+                    <tr>
 
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Date</th>
 
-    
-            <section class="recent-sales">
+                    </tr>
 
-                <div class="section-title">
+                </thead>
 
-                    <div>
 
-                        <h2>Sales History</h2>
+                <tbody>
 
-                        <p>
-                            Complete record of your sales.
-                        </p>
+                    {% for sale in sales %}
 
-                    </div>
+                    <tr>
 
-                </div>
+                        <td>
+                            {{ sale["product_name"] }}
+                        </td>
 
+                        <td>
+                            {{ sale["quantity"] }}
+                        </td>
 
-                
-                <div class="table-container">
+                        <td>
+                            GH₵ {{ "{:,.2f}".format(sale["total"] | float) }}
+                        </td>
 
-                    <table>
+                        <td>
+                            {{ sale["date"] }}
+                        </td>
 
-                        <thead>
+                    </tr>
 
-                            <tr>
+                    {% else %}
 
-                                <th>Product</th>
+                    <tr>
 
-                                <th>Quantity</th>
+                        <td colspan="4" class="empty-message">
+                            No sales recorded yet.
+                        </td>
 
-                                <th>Total</th>
+                    </tr>
 
-                                <th>Date</th>
+                    {% endfor %}
 
-                            </tr>
+                </tbody>
 
-                        </thead>
+            </table>
 
+        </div>
 
-                        <tbody>
+    </section>
 
-                            {% for sale in sales %}
+</main>
 
-                            <tr>
-
-                                <td>
-                                    {{ sale["product_name"] }}
-                                </td>
-
-                                <td>
-                                    {{ sale["quantity"] }}
-                                </td>
-
-                                <td>
-                                    GH₵ {{ "{:,.2f}".format(sale["total"] | float) }}
-                                </td>
-
-                                <td>
-                                    {{ sale["date"] }}
-                                </td>
-
-                            </tr>
-
-                            {% else %}
-
-                            <tr>
-
-                                <td colspan="4" class="empty-message">
-                                    No sales recorded yet.
-                                </td>
-
-                            </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </section>
-
-        </section>
-
-    </main>
-
-</body>
-
-</html>
-
+{% endblock %}
