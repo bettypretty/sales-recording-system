@@ -81,19 +81,42 @@
         </form>
 
     </div>
-        <script>
+       <script>
     const priceInput = document.getElementById("price");
 
     priceInput.addEventListener("input", function () {
-        
-        let value = this.value.replace(/[^0-9]/g, "");
 
-        
+        let value = this.value.replace(/,/g, "");
+
+        // Allow only numbers and one decimal point
+        value = value.replace(/[^0-9.]/g, "");
+
+        // Allow only one decimal point
+        const parts = value.split(".");
+
+        if (parts.length > 2) {
+            value = parts[0] + "." + parts.slice(1).join("");
+        }
+
         if (value) {
-            this.value = Number(value).toLocaleString("en-US");
+
+            let parts = value.split(".");
+            let wholeNumber = parts[0];
+            let decimal = parts[1];
+
+            // Add commas to the whole number
+            wholeNumber = Number(wholeNumber).toLocaleString("en-US");
+
+            if (decimal !== undefined) {
+                this.value = wholeNumber + "." + decimal.substring(0, 2);
+            } else {
+                this.value = wholeNumber;
+            }
+
+        } else {
+            this.value = "";
         }
     });
 </script>
-
 
 
