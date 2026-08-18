@@ -28,30 +28,46 @@ def login_required():
 
     return None
 
+
 # DASHBOARD
 @app.route("/")
 def dashboard():
 
-    print("USER ID:", session.get("user_id"))
-
     if "user_id" not in session:
         return redirect("/login")
 
+    user_id = session["user_id"]
+
     connection = get_db_connection()
 
-    # Total number of products
+    # Total number of products for the logged-in user
     total_products = connection.execute(
-        "SELECT COUNT(*) FROM products"
+        """
+        SELECT COUNT(*)
+        FROM products
+        WHERE user_id = ?
+        """,
+        (user_id,)
     ).fetchone()[0]
 
-    # Total revenue
+    # Total revenue for the logged-in user
     total_revenue = connection.execute(
-        "SELECT COALESCE(SUM(total), 0) FROM sales"
+        """
+        SELECT COALESCE(SUM(total), 0)
+        FROM sales
+        WHERE user_id = ?
+        """,
+        (user_id,)
     ).fetchone()[0]
 
-    # Total quantity sold
+    # Total quantity sold by the logged-in user
     total_sales = connection.execute(
-        "SELECT COALESCE(SUM(quantity), 0) FROM sales"
+        """
+        SELECT COALESCE(SUM(quantity), 0)
+        FROM sales
+        WHERE user_id = ?
+        """,
+        (user_id,)
     ).fetchone()[0]
 
     # Today's sales count
@@ -59,8 +75,10 @@ def dashboard():
         """
         SELECT COUNT(*)
         FROM sales
-        WHERE DATE(date) = DATE('now')
-        """
+        WHERE user_id = ?
+        AND DATE(date) = DATE('now')
+        """,
+        (user_id,)
     ).fetchone()[0]
 
     # Recent sales
@@ -68,10 +86,12 @@ def dashboard():
         """
         SELECT *
         FROM sales
-        WHERE DATE(date) = DATE('now')
+        WHERE user_id = ?
+        AND DATE(date) = DATE('now')
         ORDER BY id DESC
         LIMIT 5
-        """
+        """,
+        (user_id,)
     ).fetchall()
 
     connection.close()
@@ -84,7 +104,7 @@ def dashboard():
         todays_sales=todays_sales,
         recent_sales=recent_sales
     )
-    
+
 # PRODUCTS
 @app.route("/products")
 def products():
@@ -93,12 +113,14 @@ def products():
 
     if login_check:
         return login_check
+    
+    user_id = session["user_id"]
 
     connection = get_db_connection()
 
     products = connection.execute(
-        "SELECT * FROM products ORDER BY id DESC"
-    ).fetchall()
+        "SELECT * FROM products WHERE user_id = ? ORDER BY id DESC""",
+    (user_id,)).fetchall()
 
     connection.close()
 
@@ -116,12 +138,13 @@ def sales():
 
     if login_check:
         return login_check
+    user_id = session["user_id"]
 
     connection = get_db_connection()
 
     sales = connection.execute(
-        "SELECT * FROM sales ORDER BY id DESC"
-    ).fetchall()
+        "SELECT * FROM sales WHERE user_id = ? ORDER BY id DESC""",
+    (user_id,)).fetchall()
 
     connection.close()
 
@@ -129,7 +152,6 @@ def sales():
         "sales.html",
         sales=sales
     )
-
 
 # REPORTS
 @app.route("/reports")
@@ -140,34 +162,60 @@ def reports():
     if login_check:
         return login_check
 
+    user_id = session["user_id"]
+
     connection = get_db_connection()
 
+    # Total number of products for this user
     total_products = connection.execute(
-        "SELECT COUNT(*) FROM products"
+        """
+        SELECT COUNT(*)
+        FROM products
+        WHERE user_id = ?
+        """,
+        (user_id,)
     ).fetchone()[0]
 
+    # Total revenue for this user
     total_revenue = connection.execute(
-        "SELECT COALESCE(SUM(total), 0) FROM sales"
+        """
+        SELECT COALESCE(SUM(total), 0)
+        FROM sales
+        WHERE user_id = ?
+        """,
+        (user_id,)
     ).fetchone()[0]
 
+    # Total quantity sold by this user
     total_sales = connection.execute(
-        "SELECT COALESCE(SUM(quantity), 0) FROM sales"
+        """
+        SELECT COALESCE(SUM(quantity), 0)
+        FROM sales
+        WHERE user_id = ?
+        """,
+        (user_id,)
     ).fetchone()[0]
 
+    # Today's sales count for this user
     todays_sales = connection.execute(
         """
         SELECT COUNT(*)
         FROM sales
-        WHERE DATE(date) = DATE('now')
-        """
+        WHERE user_id = ?
+        AND DATE(date) = DATE('now')
+        """,
+        (user_id,)
     ).fetchone()[0]
 
+    # Sales belonging only to this user
     sales = connection.execute(
         """
         SELECT *
         FROM sales
+        WHERE user_id = ?
         ORDER BY id DESC
-        """
+        """,
+        (user_id,)
     ).fetchall()
 
     connection.close()
@@ -180,7 +228,6 @@ def reports():
         todays_sales=todays_sales,
         sales=sales
     )
-
 
  # ADD PRODUCT
 @app.route("/add_product", methods=["GET", "POST"])
@@ -202,13 +249,13 @@ def add_product():
         quantity = request.form["quantity"]
 
         connection = get_db_connection()
-
+        user_id = session["user_id"]
         connection.execute(
             """
-            INSERT INTO products (name, category, price, quantity)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO products (user_id , name, category, price, quantity)
+            VALUES (?, ?, ?, ?, ?)
             """,
-            (name, category, price, quantity)
+            (user_id,name, category, price, quantity)
         )
 
         connection.commit()
@@ -228,11 +275,17 @@ def delete_product(product_id):
     if login_check:
         return login_check
 
+    user_id = session["user_id"]
+
     connection = get_db_connection()
 
     connection.execute(
-        "DELETE FROM products WHERE id = ?",
-        (product_id,)
+        """
+        DELETE FROM products
+        WHERE id = ?
+        AND user_id = ?
+        """,
+        (product_id, user_id)
     )
 
     connection.commit()
@@ -240,8 +293,7 @@ def delete_product(product_id):
 
     return redirect("/products")
 
-
-  # EDIT PRODUCT 
+ # EDIT PRODUCT
 @app.route("/edit_product/<int:product_id>", methods=["GET", "POST"])
 def edit_product(product_id):
 
@@ -250,13 +302,16 @@ def edit_product(product_id):
     if login_check:
         return login_check
 
+    user_id = session["user_id"]
+
     connection = get_db_connection()
 
     if request.method == "POST":
 
         name = request.form["name"]
         category = request.form["category"]
-        price = request.form["price"]
+        price = request.form["price"].replace(",", "")
+        price = float(price)
         quantity = request.form["quantity"]
 
         connection.execute(
@@ -264,8 +319,16 @@ def edit_product(product_id):
             UPDATE products
             SET name = ?, category = ?, price = ?, quantity = ?
             WHERE id = ?
+            AND user_id = ?
             """,
-            (name, category, price, quantity, product_id)
+            (
+                name,
+                category,
+                price,
+                quantity,
+                product_id,
+                user_id
+            )
         )
 
         connection.commit()
@@ -274,8 +337,13 @@ def edit_product(product_id):
         return redirect("/products")
 
     product = connection.execute(
-        "SELECT * FROM products WHERE id = ?",
-        (product_id,)
+        """
+        SELECT *
+        FROM products
+        WHERE id = ?
+        AND user_id = ?
+        """,
+        (product_id, user_id)
     ).fetchone()
 
     connection.close()
@@ -285,15 +353,18 @@ def edit_product(product_id):
         product=product
     )
 
-
- # RECORD SALE
+# RECORD SALE
 @app.route("/record_sale", methods=["GET", "POST"])
 def record_sale():
+
+    print("RECORD SALE USER ID:", session.get("user_id"))
 
     login_check = login_required()
 
     if login_check:
         return login_check
+
+    user_id = session["user_id"]
 
     connection = get_db_connection()
 
@@ -302,9 +373,15 @@ def record_sale():
         product_id = request.form["product_id"]
         quantity = int(request.form["quantity"])
 
+        # Find the product only if it belongs to the logged-in user
         product = connection.execute(
-            "SELECT * FROM products WHERE id = ?",
-            (product_id,)
+            """
+            SELECT *
+            FROM products
+            WHERE id = ?
+            AND user_id = ?
+            """,
+            (product_id, user_id)
         ).fetchone()
 
         if product is None:
@@ -328,13 +405,15 @@ def record_sale():
 
         total = product["price"] * quantity
 
+        # Record the sale under the logged-in user's account
         connection.execute(
             """
             INSERT INTO sales
-            (product_name, category, quantity, total)
-            VALUES (?, ?, ?, ?)
+            (user_id, product_name, category, quantity, total)
+            VALUES (?, ?, ?, ?, ?)
             """,
             (
+                user_id,
                 product["name"],
                 product["category"],
                 quantity,
@@ -342,13 +421,15 @@ def record_sale():
             )
         )
 
+        # Reduce the stock of the user's product
         connection.execute(
             """
             UPDATE products
             SET quantity = quantity - ?
             WHERE id = ?
+            AND user_id = ?
             """,
-            (quantity, product_id)
+            (quantity, product_id, user_id)
         )
 
         connection.commit()
@@ -356,8 +437,15 @@ def record_sale():
 
         return redirect("/sales")
 
+    # Show only this user's products
     products = connection.execute(
-        "SELECT * FROM products ORDER BY name"
+        """
+        SELECT *
+        FROM products
+        WHERE user_id = ?
+        ORDER BY name
+        """,
+        (user_id,)
     ).fetchall()
 
     connection.close()
@@ -366,7 +454,6 @@ def record_sale():
         "record_sale.html",
         products=products
     )
-
 
 # LOGIN
 @app.route("/login", methods=["GET", "POST"])

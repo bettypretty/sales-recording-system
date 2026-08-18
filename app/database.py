@@ -1,4 +1,3 @@
-
 # database.py
 
 # Handles the connection between the Flask app and SQLite database
@@ -31,14 +30,26 @@ def create_tables():
     connection = get_db_connection()
     cursor = connection.cursor()
 
+    # Create the users table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        )
+    """)
+
     # Create the products table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
             name TEXT NOT NULL,
             category TEXT NOT NULL,
             price REAL NOT NULL,
-            quantity INTEGER NOT NULL
+            quantity INTEGER NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
         )
     """)
 
@@ -46,36 +57,31 @@ def create_tables():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS sales (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
             product_name TEXT NOT NULL,
             category TEXT NOT NULL,
             quantity INTEGER NOT NULL,
             total REAL NOT NULL,
-            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
         )
     """)
 
-    # Create the users table
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT,
-            email TEXT NOT NULL,
-            password TEXT NOT NULL
-        )
-    """)
-
-   # Add username column if it is missing from an existing users table
+    # Add user_id to products if it is missing
     try:
         cursor.execute(
-            "ALTER TABLE users ADD COLUMN username TEXT"
+            "ALTER TABLE products ADD COLUMN user_id INTEGER"
         )
     except sqlite3.OperationalError:
         pass
 
-    # Save the changes
+    # Add user_id to sales if it is missing
+    try:
+        cursor.execute(
+            "ALTER TABLE sales ADD COLUMN user_id INTEGER"
+        )
+    except sqlite3.OperationalError:
+        pass
+
     connection.commit()
-
-    # Close the database connection
     connection.close()
-
-   
