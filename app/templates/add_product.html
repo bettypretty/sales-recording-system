@@ -88,10 +88,10 @@
 
         let value = this.value.replace(/,/g, "");
 
-        // Allow only numbers and one decimal point
+
         value = value.replace(/[^0-9.]/g, "");
 
-        // Allow only one decimal point
+        
         const parts = value.split(".");
 
         if (parts.length > 2) {
@@ -104,7 +104,7 @@
             let wholeNumber = parts[0];
             let decimal = parts[1];
 
-            // Add commas to the whole number
+    
             wholeNumber = Number(wholeNumber).toLocaleString("en-US");
 
             if (decimal !== undefined) {
