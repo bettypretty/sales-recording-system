@@ -667,11 +667,10 @@ def reset_password():
 
     return render_template("reset_password.html")
 
-@app.route("/restocking")
-def restocking():
+
 
  # START APPLICATION
-  if __name__ == "__main__":
+if __name__ == "__main__":
 
     app.run(
         host="0.0.0.0",
