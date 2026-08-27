@@ -455,14 +455,15 @@ def record_sale():
         products=products
     )
 
+
+
 # LOGIN
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
-   
     if request.method == "POST":
 
-        email = request.form["email"]
+        email = request.form["email"].strip()
         password = request.form["password"]
 
         connection = get_db_connection()
@@ -478,13 +479,17 @@ def login():
 
         connection.close()
 
+        
         if user:
 
-            session["user_id"] = user["id"]
+            session.clear()
 
+            session["user_id"] = user["id"]
             session["username"] = user["username"]
 
+
             return redirect("/")
+
 
         else:
 

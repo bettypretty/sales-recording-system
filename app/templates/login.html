@@ -1,17 +1,25 @@
 <!DOCTYPE html>
-<html lang ="en">
-    <head>
-        <meta charset = "UTF-8">
-        <meta name ="viewport" content = "width=device-width, initial-scale=1.0">
+<html lang="en">
 
-        <title>login - Sales Recording System</title>
+<head>
 
-     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    </head>
-    <body>
-         <div class="login-container">
+    <meta charset="UTF-8">
 
-     <div class="login-logo">S</div>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - Sales Recording System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <!-- Logo -->
+        <div class="login-logo">S</div>
 
         <h1>Welcome Back</h1>
 
@@ -19,10 +27,33 @@
             Sign in to your Sales Recording System
         </p>
 
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- Login Form -->
         <form method="POST">
 
             <div class="form-group">
-                <label for="email">Email</label>
+
+                <label for="email">
+                    Email
+                </label>
 
                 <input
                     type="email"
@@ -31,10 +62,15 @@
                     placeholder="Enter your email"
                     required
                 >
+
             </div>
 
+
             <div class="form-group">
-                <label for="password">Password</label>
+
+                <label for="password">
+                    Password
+                </label>
 
                 <input
                     type="password"
@@ -43,29 +79,61 @@
                     placeholder="Enter your password"
                     required
                 >
+
             </div>
 
+
+            <!-- Forgot Password -->
             <div class="forgot-password">
-    <a href="/forgot-password">Forgot Password?</a>
-</div>
+
+                <a href="/forgot-password">
+                    Forgot Password?
+                </a>
+
+            </div>
 
 
+            <!-- Login Button -->
             <button type="submit">
                 Login
             </button>
-            
+
+
+            <!-- Create Account -->
             <div class="create-account">
-    <span>Don't have an account?</span>
-    <a href="/register">Create one</a>
-</div>
+
+                <span>
+                    Don't have an account?
+                </span>
+
+                <a href="/register">
+                    Create one
+                </a>
+
+            </div>
 
         </form>
 
-        <p class="login-footer">
-            
-        </p>
+
+        <p class="login-footer"></p>
 
     </div>
 
+    <script>
+    setTimeout(function() {
+        const messages = document.querySelectorAll(".flash-message, .error-message");
+
+        messages.forEach(function(message) {
+            message.style.transition = "opacity 0.5s ease";
+            message.style.opacity = "0";
+
+            setTimeout(function() {
+                message.remove();
+            }, 500);
+        });
+    }, 2500);
+</script>
+
 </body>
+
 </html>
