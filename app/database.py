@@ -3,10 +3,20 @@
 # Handles the connection between the Flask app and SQLite database
 
 import sqlite3
+import os
 
+
+# Location of the SQLite database folder
+DATABASE_FOLDER = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "database"
+)
+
+# Create the database folder if it does not exist
+os.makedirs(DATABASE_FOLDER, exist_ok=True)
 
 # Location of the SQLite database file
-DATABASE = "database/sales.db"
+DATABASE = os.path.join(DATABASE_FOLDER, "sales.db")
 
 
 def get_db_connection():
